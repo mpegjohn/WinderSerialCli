@@ -21,11 +21,20 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual(len(all_ports), 3, ' There were not 3 ports returned')
 
-    def test_set_port(self):
+    def test_instance_with_port(self):
+        interface = winderIfc.Ifc('/dev/ttyS0')
+        self.assertEqual(interface.selected_port, '/dev/ttyS0', "Instance selecetd port has not been set")
+
+
+    def test_selected_port(self):
         interface = winderIfc.Ifc()
 
         interface.selected_port = '/dev/ttyS0'
+        self.assertEqual(interface.selected_port, '/dev/ttyS0', "Chosen port has not been set")
 
+    def test_write_job(self):
+        interface = winderIfc.Ifc()
+        interface.write_job()
 
 
 

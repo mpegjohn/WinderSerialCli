@@ -3,9 +3,10 @@ import serial
 import serial.tools.list_ports
 
 
-class Ifc:
+class Ifc(object):
 
-    def __init__(self):
+    def __init__(self, selected_port=None):
+        self._selected_port = selected_port
         return
 
     def get_all_ports(self):
@@ -17,6 +18,24 @@ class Ifc:
             ports.append(port[0]) # Add a port to the list
 
         return ports
+
+    @property
+    def selected_port(self):
+        return self._selected_port
+
+    @selected_port.setter
+    def selected_port(self, val):
+        self._selected_port = val
+
+    """ Writes a job to the arduino
+    sends '1' for set job mode
+    WS[4 bytes] - wire size
+    SL[4 bytes] - spool length
+    NT[4 bytes] - number of turns
+    """
+    def write_job(self, **kwargs):
+        
+
 
 
 
