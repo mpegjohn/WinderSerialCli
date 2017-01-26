@@ -35,20 +35,28 @@ class Ifc(object):
     DN
     """
     def write_job(self, wire_size, spool_length, turns):
-        ser = serial.Serial(self.selected_port)
-        ser.write('1')
-        ser.write('WS')
 
-        ieee754_data = struct.pack('f', my_float)
+        ser = serial.Serial(self.selected_port)
+
+        try:
+
+            ser.write('1')
+            ser.write('WS')
+            self.send_float(wire_size)
+            ser.write('SL')
+            self.send_float(spool_length)
+            ser.write('NT')
+            self.send_float(turns)
+            ser.write('DN')
+        
+
+    def send_float(self, data):
+
+        ieee754_data = struct.pack('f', data)
         try:
             ser.write(ieee754_data)
         except serial.SerialTimeoutException:
-            print (Timeot sending )
-
-
-
-
-
+            print ("Timeout sending float data %f" % (data))
 
 #try:
 #    ieee754_data = my_serial.read(4)
