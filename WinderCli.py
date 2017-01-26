@@ -70,19 +70,8 @@ def enter_size(descripion, initial_value):
             return parsed_size
 
 
-#try:
-#    ieee754_data = my_serial.read(4)
-#    my_float = struct.unpack('f', ieee754_data)
-#catch:
-#    # I/O Error, or junk data
-#    my_float = 0.0
-#And packing:
 
-# ieee754_data = struct.pack('f', my_float)
-# try:
-#     my_serial.write(ieee754_data)
-# catch:
-#     pass #TODO - I/O Error
+
 
 
 
