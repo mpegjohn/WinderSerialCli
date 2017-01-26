@@ -32,9 +32,20 @@ class Ifc(object):
     WS[4 bytes] - wire size
     SL[4 bytes] - spool length
     NT[4 bytes] - number of turns
+    DN
     """
-    def write_job(self, **kwargs):
-        
+    def write_job(self, wire_size, spool_length, turns):
+        ser = serial.Serial(self.selected_port)
+        ser.write('1')
+        ser.write('WS')
+
+        ieee754_data = struct.pack('f', my_float)
+        try:
+            ser.write(ieee754_data)
+        except serial.SerialTimeoutException:
+            print (Timeot sending )
+
+
 
 
 
@@ -51,4 +62,3 @@ class Ifc(object):
 # try:
 #     my_serial.write(ieee754_data)
 # catch:
-#     pass #TODO - I/O Error
