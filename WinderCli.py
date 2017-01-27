@@ -70,6 +70,9 @@ def enter_size(descripion, initial_value):
             return parsed_size
 
 
+
+
+
 #try:
 #    ieee754_data = my_serial.read(4)
 #    my_float = struct.unpack('f', ieee754_data)
