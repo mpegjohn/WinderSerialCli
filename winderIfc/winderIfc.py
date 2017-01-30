@@ -48,7 +48,7 @@ class Ifc(object):
             ser.write('NT')
             self.send_float(turns)
             ser.write('DN')
-        
+
 
     def send_float(self, data):
 
