@@ -31,14 +31,16 @@ class Ifc(object):
     sends '1' for set job mode
     WS[4 bytes] - wire size
     SL[4 bytes] - spool length
-    NT[4 bytes] - number of turns
+    TT[4 bytes] - number of turns
+    NL[1 byte ] -- Number of whole layers
+    LL[4 bytes ] -- Turns last layer
     DN
+
     """
     def write_job(self, wire_size, spool_length, turns):
 
         ser = serial.Serial(self.selected_port)
 
-        try:
 
             ser.write('1')
             ser.write('WS')
