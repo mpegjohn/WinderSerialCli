@@ -67,6 +67,7 @@ class Ifc(object):
             raise BufferError("Only sent %d bytes" % num_bytes)
 
         echo_chars = self.ser.readline()
+        echo_chars = echo_chars.rstrip()
 
         if (heading != echo_chars):
             raise BufferError("Data not received correctly sent %s got %s" % (heading, echo_chars))

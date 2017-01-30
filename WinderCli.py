@@ -1,21 +1,52 @@
 from __future__ import print_function
-from __future__ import print_function
-from __future__ import print_function
-from __future__ import print_function
-from __future__ import print_function
-from __future__ import print_function
-from __future__ import print_function
-from __future__ import print_function
-from __future__ import print_function
-from __future__ import print_function
-
 import time
+from winderCliLib.winderSerial import Ifc
+
 
 
 def main():
     print("Welcome to the winder interface")
 
+    interface = Ifc()
+
+    port = get_port_selection(interface)
+    print("Port selected: " + port)
+    interface.selected_port = port
+
+    interface.setup_serial()
+
+    interface.write_job(0.5, 18.0, 200, 3, 22)
+
+
     print_menu()
+
+
+def get_port_selection(interface):
+
+    while(True):
+        print("-------------------------------------")
+        print("Select the correct serial port from the list")
+
+        all_ports = interface.get_all_ports()
+
+        selection = 0
+        for port in all_ports:
+            print ("(%d) %s" % (selection, port))
+            selection +=1
+        print("(%d) quit" % selection)
+        print("-------------------------------------")
+
+        choice = int(raw_input("Choice: "))
+
+        if choice not in range(0,selection+1,1):
+            print("Invalid choice")
+            time.sleep(3)
+            continue
+        if choice ==  len(all_ports):
+            exit(0)
+
+        return all_ports[choice]
+
 
 
 def print_menu(wire_size=0.0, spool_length=0.0, num_turns=0.0):
@@ -54,6 +85,7 @@ def print_menu(wire_size=0.0, spool_length=0.0, num_turns=0.0):
             else:
                 continue
         elif (selection.lower() == 'r'):
+            return
 
 
 
