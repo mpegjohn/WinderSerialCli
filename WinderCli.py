@@ -22,6 +22,14 @@ def main():
 
 
 def get_port_selection(interface):
+    """Prints a list of serial ports, and allows selection of one
+    Args:
+        interface (WinderCli) - A winder interface object
+    Returns:
+        A selected port
+
+    If q is selected program quits.
+    """
 
     while(True):
         print("-------------------------------------")
@@ -84,7 +92,7 @@ def print_menu(wire_size=0.0, spool_length=0.0, num_turns=0.0):
                 num_turns = got_size
             else:
                 continue
-        elif (selection.lower() == 'r'):
+        elif (selection.lower() == 'j'):
             return
 
 

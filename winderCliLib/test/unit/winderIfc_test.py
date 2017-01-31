@@ -103,7 +103,7 @@ class MyTestCase(unittest.TestCase):
         self.interface.setup_serial()
         with self.assertRaises(ValueError) as cm:
             self.interface.send_byte(12345)
-        self.assertEquals("bytes should be no graeter than 255", str(cm.exception))
+        self.assertEquals("bytes should be no greater than 255", str(cm.exception))
 
     def test_send_byte_lt_0(self):
         self.interface.setup_serial()

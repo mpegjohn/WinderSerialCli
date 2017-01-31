@@ -1,7 +1,7 @@
 """
-All classes that relate to the arduino winder serial interface.
+All classes that relate to the Arduino winder serial interface.
 """
-
+from winderJob import Job
 import struct
 import serial
 import serial.tools.list_ports
@@ -9,9 +9,9 @@ import serial.tools.list_ports
 
 class Ifc(object):
     def __init__(self, selected_port=None):
-        """Construvtor
+        """Constructor
         Args:
-             selected_port (string) - Optional port selelection.
+             selected_port (string) - Optional port selection.
         """
         self._selected_port = selected_port
         return
@@ -45,8 +45,8 @@ class Ifc(object):
         self.ser = serial.Serial(self.selected_port)
         return
 
-    def write_job(self, wire_size, spool_length, turns, num_layers, last_turns):
-        """Writes a job to the arduino.
+    def write_job(self, job):
+        """Writes a job to the Arduino.
 
          Sends data in the required sequence to setup a new winding job.
          SJ = Setup Job
@@ -58,28 +58,24 @@ class Ifc(object):
          DN - Done
 
          Args:
-             wire_size (float) - The wire diameter in mm
-             spool_length (float) - The spool length in mm
-             turns (float) - Total number of turns
-             num_layers (int) - The number of layers
-             last_turns (float) - The number of turns on the last layer
+             job (Job) - A job to send
 
          """
         self.send_heading('SJ')
         self.send_heading('WS')
-        self.send_float(wire_size)
+        self.send_float(job.wire_size)
         self.send_heading('SL')
-        self.send_float(spool_length)
+        self.send_float(job.spool_length)
         self.send_heading('TT')
-        self.send_float(turns)
+        self.send_float(job.turns)
         self.send_heading('NL')
-        self.send_byte(num_layers)
+        self.send_byte(job.whole_layers)
         self.send_heading('LL')
-        self.send_float(last_turns)
+        self.send_float(job.turns_last_layer)
         self.send_heading('DN')
 
     def send_heading(self, heading):
-        """ Sends a two byte ascii heading to the arduino
+        """ Sends a two byte ascii heading to the Arduino
 
         Args:
             heading (string) - The heading to send
@@ -87,7 +83,7 @@ class Ifc(object):
             True if all sent OK
         Raises:
             TypeError - Non string type as argument
-            BufferError - Bytes sent diaparity or data disparity
+            BufferError - Bytes sent disparity or data disparity
 
         """
         if not isinstance(heading, basestring):
@@ -95,19 +91,19 @@ class Ifc(object):
 
         num_bytes = self.ser.write(heading)
 
-        if (num_bytes != len(heading)):
+        if num_bytes != len(heading):
             raise BufferError("Only sent %d bytes" % num_bytes)
 
         echo_chars = self.ser.readline()
         echo_chars = echo_chars.rstrip()
 
-        if (heading != echo_chars):
+        if heading != echo_chars:
             raise BufferError("Data not received correctly sent %s got %s" % (heading, echo_chars))
 
         return True
 
     def send_byte(self, data):
-        """ Sends a byte of data to the arduino
+        """ Sends a byte of data to the Arduino
         Args:
              data (int) - Data to send
         Returns:
@@ -124,27 +120,27 @@ class Ifc(object):
             raise TypeError("Data must be an int")
 
         if data > 255:
-            raise ValueError("bytes should be no graeter than 255")
+            raise ValueError("bytes should be no greater than 255")
 
         if data < 0:
             raise ValueError("bytes should be unsigned")
 
-        usigned_byte = struct.pack('B', data);
+        unsigned_byte = struct.pack('B', data)
 
-        num_sent = self.ser.write(usigned_byte)
+        num_sent = self.ser.write(unsigned_byte)
 
         if num_sent != 1:
             raise BufferError("Didn't send 1 byte")
 
         echo_data = self.ser.read(1)
 
-        if echo_data != usigned_byte:
-            BufferError("Byte sent and recieved don't agree")
+        if echo_data != unsigned_byte:
+            BufferError("Byte sent and received don't agree")
 
         return True
 
     def send_float(self, data):
-        """ Sends a float to the arduino
+        """ Sends a float to the Arduino
         The float is converted to a 4 byte ieee754 data block and
         sent as a 4 byte bit of data.
 
@@ -172,9 +168,7 @@ class Ifc(object):
 
         echo_data = self.ser.read(4)
 
-        my_float = struct.unpack('f', echo_data)
-
         if echo_data != ieee754_data:
-            raise BufferError("Float sent and recieved don't agree")
+            raise BufferError("Float sent and received don't agree")
 
         return True
