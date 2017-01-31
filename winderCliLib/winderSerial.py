@@ -89,6 +89,8 @@ class Ifc(object):
         if not isinstance(heading, basestring):
             raise TypeError("Heading must be a string")
 
+        self.ser.reset_input_buffer()
+
         num_bytes = self.ser.write(heading)
 
         if num_bytes != len(heading):
@@ -127,6 +129,8 @@ class Ifc(object):
 
         unsigned_byte = struct.pack('B', data)
 
+        self.ser.reset_input_buffer()
+
         num_sent = self.ser.write(unsigned_byte)
 
         if num_sent != 1:
@@ -162,6 +166,8 @@ class Ifc(object):
 
         ieee754_data = struct.pack('f', data)
 
+        self.ser.reset_input_buffer()
+
         num_sent = self.ser.write(ieee754_data)
         if num_sent != 4:
             raise BufferError("Didn't send 4 bytes")
@@ -172,3 +178,27 @@ class Ifc(object):
             raise BufferError("Float sent and received don't agree")
 
         return True
+
+    def get_status(self):
+        """Gets the current status from the winder."""
+        self.send_heading('GS')
+        layer_number_byte = self.ser.read(1)
+        turns_bytes = self.ser.read(4)
+        layer_turns_bytes = self.ser.read(4)
+        speed_bytes = self.ser.read(4)
+        direction_byte = self.ser.read(1)
+        running_byte = self.ser.read(1)
+
+        layer_number = struct.unpack('B', layer_number_byte)[0]
+        turns = struct.unpack('f', turns_bytes)[0]
+        layer_turns = struct.unpack('f', layer_turns_bytes)[0]
+        speed = struct.unpack('f', speed_bytes)[0]
+        direction = struct.unpack('B', direction_byte)[0]
+        running = struct.unpack('B', running_byte)[0]
+
+
+
+
+
+
+

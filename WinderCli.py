@@ -21,6 +21,8 @@ def main():
 
     interface.write_job(job)
 
+    interface.get_status()
+
     print_menu()
 
 
