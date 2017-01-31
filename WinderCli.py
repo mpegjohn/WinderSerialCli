@@ -1,6 +1,7 @@
 from __future__ import print_function
 import time
 from winderCliLib.winderSerial import Ifc
+from winderCliLib.winderJob import Job
 
 
 
@@ -15,8 +16,10 @@ def main():
 
     interface.setup_serial()
 
-    interface.write_job(0.5, 18.0, 200, 3, 22)
+    job = Job(0.5, 500, 18.0)
+    job.calculate_stackup()
 
+    interface.write_job(job)
 
     print_menu()
 
