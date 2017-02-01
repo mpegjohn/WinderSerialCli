@@ -5,6 +5,7 @@ from winderJob import Job
 import struct
 import serial
 import serial.tools.list_ports
+import time
 
 
 class Ifc(object):
@@ -42,7 +43,8 @@ class Ifc(object):
 
     def setup_serial(self):
         """Sets the serial port up using the selected port."""
-        self.ser = serial.Serial(self.selected_port)
+        self.ser = serial.Serial(baudrate=115200, port=self.selected_port, timeout=5, write_timeout=5)
+        time.sleep(2)
         return
 
     def write_job(self, job):
@@ -61,13 +63,18 @@ class Ifc(object):
              job (Job) - A job to send
 
          """
+        self.ser.reset_input_buffer()
+        self.ser.reset_output_buffer()
+
         self.send_heading('SJ')
         self.send_heading('WS')
         self.send_float(job.wire_size)
-        self.send_heading('SL')
-        self.send_float(job.spool_length)
         self.send_heading('TT')
         self.send_float(job.turns)
+        self.send_heading('SL')
+        self.send_float(job.spool_length)
+        self.send_heading('TL')
+        self.send_float(job.turns_per_layer)
         self.send_heading('NL')
         self.send_byte(job.whole_layers)
         self.send_heading('LL')
@@ -86,10 +93,12 @@ class Ifc(object):
             BufferError - Bytes sent disparity or data disparity
 
         """
+
         if not isinstance(heading, basestring):
             raise TypeError("Heading must be a string")
 
         self.ser.reset_input_buffer()
+
 
         num_bytes = self.ser.write(heading)
 
@@ -179,7 +188,7 @@ class Ifc(object):
 
         return True
 
-    def get_status(self):
+    def get_status(self, job):
         """Gets the current status from the winder."""
         self.send_heading('GS')
         layer_number_byte = self.ser.read(1)
@@ -195,6 +204,15 @@ class Ifc(object):
         speed = struct.unpack('f', speed_bytes)[0]
         direction = struct.unpack('B', direction_byte)[0]
         running = struct.unpack('B', running_byte)[0]
+
+        job.update_status(layer_num=layer_number, turns=turns, layer_turns=layer_turns, speed=speed, direction=direction, running=running)
+
+
+    def start(self):
+        self.send_heading("GO")
+
+
+
 
 
 

@@ -94,10 +94,10 @@ class MyTestCase(unittest.TestCase):
 
     @patch('serial.Serial.read')
     def test_send_byte_good(self, mock_read):
-        byte_data = struct.pack('B', 123)
+        byte_data = struct.pack('B', 13)
         mock_read.return_value = byte_data
         self.interface.setup_serial()
-        self.assertTrue(self.interface.send_byte(123))
+        self.assertTrue(self.interface.send_byte(13))
 
     def test_send_byte_gt_255(self):
         self.interface.setup_serial()

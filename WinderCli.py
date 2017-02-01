@@ -2,8 +2,7 @@ from __future__ import print_function
 import time
 from winderCliLib.winderSerial import Ifc
 from winderCliLib.winderJob import Job
-
-
+import sys
 
 def main():
     print("Welcome to the winder interface")
@@ -21,10 +20,15 @@ def main():
 
     interface.write_job(job)
 
-    interface.get_status()
+    interface.get_status(job)
 
-    print_menu()
+    interface.start()
 
+    while(True):
+        time.sleep(2)
+        interface.get_status(job)
+
+        sys.stdout.write("\r%s %s doing layer %s" % (job.current_turns, job.current_running, job.current_layer_mum))
 
 def get_port_selection(interface):
     """Prints a list of serial ports, and allows selection of one
