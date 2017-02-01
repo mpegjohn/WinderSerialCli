@@ -14,21 +14,10 @@ def main():
     interface.selected_port = port
 
     interface.setup_serial()
+    print_menu()
 
-    job = Job(0.5, 500, 18.0)
-    job.calculate_stackup()
 
-    interface.write_job(job)
 
-    interface.get_status(job)
-
-    interface.start()
-
-    while(True):
-        time.sleep(2)
-        interface.get_status(job)
-
-        sys.stdout.write("\r%s %s doing layer %s" % (job.current_turns, job.current_running, job.current_layer_mum))
 
 def get_port_selection(interface):
     """Prints a list of serial ports, and allows selection of one
@@ -66,16 +55,20 @@ def get_port_selection(interface):
 
 
 
-def print_menu(wire_size=0.0, spool_length=0.0, num_turns=0.0):
+def print_menu():
+
+    job = Job(0.5, 500, 18.0)
+
     while (True):
 
         print("-------------------------------------")
-        print("w : Set wire size %2.3f" % (wire_size))
-        print("l : Set wire spool length %2.2f" % (spool_length))
-        print("n : Set number of turns %8.1f" % (num_turns))
+        print("w : Set wire size %2.3f" % (job.wire_size))
+        print("l : Set wire spool length %3.2f" % (job.spool_length))
+        print("n : Set number of turns %8.1f" % (job.turns))
         print("r : Run")
         print("p : Pause")
         print("j : Review job")
+        print("q : Quit program")
         print("-------------------------------------")
 
         selection = raw_input("Choose option: ")
@@ -84,27 +77,45 @@ def print_menu(wire_size=0.0, spool_length=0.0, num_turns=0.0):
             got_size = enter_size("Enter wire size")
 
             if (got_size != 'q'):
-                wire_size = got_size
+                job.wire_size = got_size
             else:
                 continue
         elif (selection.lower() == 'l'):
             got_size = enter_size("Enter spool length")
 
             if (got_size != 'q'):
-                spool_length = got_size
+                job.spool_length = got_size
             else:
                 continue
         elif (selection.lower() == 'n'):
             got_size = enter_size("Enter number of turns")
 
             if (got_size != 'q'):
-                num_turns = got_size
+                job.turns = got_size
             else:
                 continue
         elif (selection.lower() == 'j'):
-            return
+            job.calculate_stackup()
+            print (job.__str__())
+            continue
+        elif (selection.lower() == 'r'):
+            job.calculate_stackup()
+            execute_job(job)
+        elif (selection.lower() == 'q'):
+            exit(0)
 
+def execute_job(job):
+    interface.write_job(job)
 
+    interface.get_status(job)
+
+    interface.start()
+
+    while(True):
+        time.sleep(2)
+        interface.get_status(job)
+
+        sys.stdout.write("\r%s %s doing layer %s" % (job.current_turns, job.current_running, job.current_layer_mum))
 
 def enter_size(descripion):
     while (True):
