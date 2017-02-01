@@ -44,6 +44,13 @@ class Job(object):
 
         self.turns_progress = (self.current_turns / self.turns) * 100
 
+    def __str__(self):
+        turns_repr =  "Number of Turns: %8.1f\n" % self.turns
+        wire_repr =  "Wire Size: %2.3f mm\n" % self.wire_size
+        spool_repr = "Spool length: %3.2f mm\n" % self.spool_length
+        turns_per_layer_repr = "Turns per layer %4.1f\n" % self.turns_per_layer
+        whole_layers_repr = "Number of whole layers: %d\n" % self.whole_layers
+        last_layer_turns_repr = "Number of turns last layer: %4.1f\n" % self.turns_last_layer
 
-
+        return turns_repr + wire_repr + spool_repr + turns_per_layer_repr + whole_layers_repr + last_layer_turns_repr
 
