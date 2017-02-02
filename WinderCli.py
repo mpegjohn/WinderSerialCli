@@ -66,7 +66,7 @@ def print_menu(interface):
         print("l : Set wire spool length %3.2f" % (job.spool_length))
         print("n : Set number of turns %8.1f" % (job.turns))
         print("r : Run")
-        print("p : Pause")
+        print("m : Manual Motor control")
         print("j : Review job")
         print("q : Quit program")
         print("-------------------------------------")
@@ -102,12 +102,26 @@ def print_menu(interface):
             print (job.__str__())
             print("-------------------------------------\n")
             continue
+        elif (selection.lower() == 'm'):
+            motor_control(interface)
+            continue
         elif (selection.lower() == 'r'):
             job.calculate_stackup()
-            execute_job(job, interface)
+            print("\n-------------------------------------")
+            print("Run a job with this stackup?")
+            print("-------------------------------------")
+            print (job.__str__())
+            print("-------------------------------------\n")
+            selection = raw_input("y/n: ")
+            if selection.lower() == 'y':
+                execute_job(job, interface)
             continue
         elif (selection.lower() == 'q'):
             exit(0)
+        else:
+            print("Unkown option")
+            time.sleep(3)
+            continue
 
 def execute_job(job, interface):
     """Runs this job."""
@@ -151,6 +165,40 @@ def enter_size(descripion):
                 continue
             return parsed_size
 
+def motor_control(interface):
+
+    while(True):
+        (spool, shuttle) = interface.get_motor_status()
+        print("\n-------------------------------------")
+        print("Motor control")
+        print("-------------------------------------")
+
+        spool_state = "Disabled"
+        if spool:
+            spool_state =  "Enabled"
+        shuttle_state = "Disabled"
+        if shuttle:
+            shuttle_state =  "Enabled"
+
+        print("s : Toggle spool (%s)" % spool_state)
+        print("h : Toggle shuttle (%s)" % shuttle_state)
+        print("q : quit")
+        selection = raw_input("Choose option: ")
+
+        if selection.lower() == 'q':
+            return
+
+        if selection.lower() == 's':
+            interface.toggle_motor_state('spool')
+            continue
+
+        elif selection.lower() == 'h':
+            interface.toggle_motor_state('shuttle')
+            continue
+        else:
+            print("Unkown option")
+            time.sleep(3)
+            continue
 
 # Print iterations progress
 def printProgressBar(progress, prefix='', suffix='', decimals=1, bar_length=100):

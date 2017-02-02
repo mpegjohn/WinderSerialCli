@@ -111,6 +111,51 @@ class MyTestCase(unittest.TestCase):
             self.interface.send_byte(-2)
         self.assertEquals("bytes should be unsigned", str(cm.exception))
 
+    def test_initial_motor_state(self):
+        self.assertTrue(self.interface.motors['spool'], "Spool is not True")
+        self.assertTrue(self.interface.motors['shuttle'], "Shuttle is not True")
+
+    @patch('winderCliLib.winderSerial.Ifc.set_motors')
+    def test_toggle_motor_state(self, mock_set_motors):
+        self.interface.toggle_motor_state("spool")
+        self.assertFalse(self.interface.motors['spool'], "Spool is not False")
+        self.assertTrue(self.interface.motors['shuttle'], "Shuttle is not True")
+        self.interface.toggle_motor_state("shuttle")
+        self.assertFalse(self.interface.motors['spool'], "Spool is not False")
+        self.assertFalse(self.interface.motors['shuttle'], "Shuttle is not False")
+        self.interface.toggle_motor_state("spool")
+        self.assertTrue(self.interface.motors['spool'], "Spool is not True")
+        self.assertFalse(self.interface.motors['shuttle'], "Shuttle is not False")
+        self.interface.toggle_motor_state("shuttle")
+        self.assertTrue(self.interface.motors['spool'], "Spool is not True")
+        self.assertTrue(self.interface.motors['shuttle'], "Shuttle is not True")
+
+
+    @patch('winderCliLib.winderSerial.Ifc.set_motors')
+    def test_toggle_motor_state_incorrect_motor_name(self, mock_set_motors):
+        with self.assertRaises(ValueError):
+            self.interface.toggle_motor_state("wibble")
+
+    @patch('winderCliLib.winderSerial.Ifc.send_heading')
+    @patch('winderCliLib.winderSerial.Ifc.send_byte')
+    def test_set_motors(self, mock_send_byte, mock_send_heading):
+        self.interface.set_motors()
+        mock_send_byte.assert_called_with(0x03)
+        self.interface.motors['spool'] = False
+        self.interface.set_motors()
+        mock_send_byte.assert_called_with(0x02)
+        self.interface.motors['shuttle'] = False
+        self.interface.set_motors()
+        mock_send_byte.assert_called_with(0x00)
+
+    def test_get_motor_status(self):
+        (spool, shuttle) = self.interface.get_motor_status()
+        self.assertTrue(spool, "Spool is not True")
+        self.assertTrue(shuttle, "Shuttle is not True")
+        self.interface.motors['spool'] = False
+        (spool, shuttle) = self.interface.get_motor_status()
+        self.assertFalse(spool, "Spool is not False")
+        self.assertTrue(shuttle, "Shuttle is not True")
 
 if __name__ == '__main__':
     unittest.main()

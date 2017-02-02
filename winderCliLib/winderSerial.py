@@ -15,6 +15,12 @@ class Ifc(object):
              selected_port (string) - Optional port selection.
         """
         self._selected_port = selected_port
+        self.motors = {}
+        self.motors['spool'] = True
+        self.motors['shuttle'] = True
+
+        self.motors['state'] = 0x03 # Both motors on
+
         return
 
     def get_all_ports(self):
@@ -207,6 +213,30 @@ class Ifc(object):
 
         job.update_status(layer_num=layer_number, turns=turns, layer_turns=layer_turns, speed=speed, direction=direction, running=running)
 
+    def toggle_motor_state(self, motor):
+
+        if motor not in ['spool', 'shuttle']:
+            raise ValueError(motor + "is not a valid motor")
+
+        self.motors[motor] = not self.motors[motor]
+        self.set_motors()
+
+    def set_motors(self):
+
+        byte_to_send = 0x03
+
+        if not self.motors['spool']:
+            byte_to_send &= 0x2
+        if not self.motors['shuttle']:
+            byte_to_send &= 0x01
+
+        self.send_heading("SM")
+        self.send_byte(byte_to_send)
+
+        return True
+
+    def get_motor_status(self):
+        return (self.motors['spool'], self.motors['shuttle'])
 
     def start(self):
         self.send_heading("GO")
