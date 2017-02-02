@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import print_function
 import time
 from winderCliLib.winderSerial import Ifc
@@ -14,9 +16,7 @@ def main():
     interface.selected_port = port
 
     interface.setup_serial()
-    print_menu()
-
-
+    print_menu(interface)
 
 
 def get_port_selection(interface):
@@ -55,7 +55,7 @@ def get_port_selection(interface):
 
 
 
-def print_menu():
+def print_menu(interface):
 
     job = Job(0.5, 500, 18.0)
 
@@ -96,26 +96,44 @@ def print_menu():
                 continue
         elif (selection.lower() == 'j'):
             job.calculate_stackup()
+            print("\n-------------------------------------")
+            print("Calculated stackup")
+            print("-------------------------------------")
             print (job.__str__())
+            print("-------------------------------------\n")
             continue
         elif (selection.lower() == 'r'):
             job.calculate_stackup()
-            execute_job(job)
+            execute_job(job, interface)
+            continue
         elif (selection.lower() == 'q'):
             exit(0)
 
-def execute_job(job):
+def execute_job(job, interface):
+    """Runs this job."""
     interface.write_job(job)
 
     interface.get_status(job)
 
     interface.start()
+    suffix = ("Complete [Turns: %6.1f Layer: %d Speed: %1.1f TPS]" % (job.current_turns, job.current_layer_mum, job.current_speed))
+
+    print ("")
+
+    printProgressBar(job.turns_progress, prefix='Progress:', suffix=suffix, bar_length=50)
+    time.sleep(1)
 
     while(True):
-        time.sleep(2)
         interface.get_status(job)
+#       sys.stdout.write("\rTurns: %6.1f Layer: %d Speed: %1.1f TPS Progress: %3.1f%%" % (job.current_turns, job.current_layer_mum, job.current_speed, job.turns_progress))
+        suffix = ("Complete [Turns: %6.1f Layer: %d Speed: %1.1f TPS]" % (job.current_turns, job.current_layer_mum, job.current_speed))
+        printProgressBar(job.turns_progress, prefix='Progress:', suffix=suffix, bar_length=50)
 
-        sys.stdout.write("\r%s %s doing layer %s" % (job.current_turns, job.current_running, job.current_layer_mum))
+        if not job.current_running:
+            print("")
+            break
+        time.sleep(1)
+    return
 
 def enter_size(descripion):
     while (True):
@@ -133,6 +151,27 @@ def enter_size(descripion):
                 continue
             return parsed_size
 
+
+# Print iterations progress
+def printProgressBar(progress, prefix='', suffix='', decimals=1, bar_length=100):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        bar_length  - Optional  : character length of bar (Int)
+    """
+    str_format = "{0:." + str(decimals) + "f}"
+    percents = str_format.format(progress)
+    filled_length = int(round(bar_length * progress/100.0))
+    bar = '█' * filled_length + '-' * (bar_length - filled_length)
+
+    sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percents, '%', suffix)),
+
+    sys.stdout.flush()
 
 if __name__ == '__main__':
     main()
