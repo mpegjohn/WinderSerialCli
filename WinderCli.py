@@ -53,9 +53,8 @@ def get_port_selection(interface):
 
         return all_ports[choice]
 
-
-
 def print_menu(interface):
+    """This is the main menu."""
 
     job = Job(0.5, 500, 18.0)
 
@@ -124,7 +123,7 @@ def print_menu(interface):
             continue
 
 def execute_job(job, interface):
-    """Runs this job."""
+    """Runs this job.against this interface"""
     interface.write_job(job)
 
     interface.get_status(job)
@@ -166,7 +165,7 @@ def enter_size(descripion):
             return parsed_size
 
 def motor_control(interface):
-
+    """Manu motor control menu"""
     while(True):
         (spool, shuttle) = interface.get_motor_status()
         print("\n-------------------------------------")
@@ -200,13 +199,12 @@ def motor_control(interface):
             time.sleep(3)
             continue
 
-# Print iterations progress
+# From Gist https://gist.github.com/aubricus/f91fb55dc6ba5557fbab06119420dd6a
 def printProgressBar(progress, prefix='', suffix='', decimals=1, bar_length=100):
-    """
+    """Print Progress in bar form
     Call in a loop to create terminal progress bar
     @params:
-        iteration   - Required  : current iteration (Int)
-        total       - Required  : total iterations (Int)
+        progreaa    - Required  : Progress to be represented in %
         prefix      - Optional  : prefix string (Str)
         suffix      - Optional  : suffix string (Str)
         decimals    - Optional  : positive number of decimals in percent complete (Int)
