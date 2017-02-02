@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
-import time
+from time import sleep
+from time import time
 from winderCliLib.winderSerial import Ifc
 from winderCliLib.winderJob import Job
 import sys
@@ -46,7 +47,7 @@ def get_port_selection(interface):
 
         if choice not in range(0,selection+1,1):
             print("Invalid choice")
-            time.sleep(3)
+            sleep(3)
             continue
         if choice ==  len(all_ports):
             exit(0)
@@ -119,7 +120,7 @@ def print_menu(interface):
             exit(0)
         else:
             print("Unkown option")
-            time.sleep(3)
+            sleep(3)
             continue
 
 def execute_job(job, interface):
@@ -129,23 +130,28 @@ def execute_job(job, interface):
     interface.get_status(job)
 
     interface.start()
-    suffix = ("Complete [Turns: %6.1f Layer: %d Speed: %1.1f TPS]" % (job.current_turns, job.current_layer_mum, job.current_speed))
+
+    start = time()
+    now = time() - start
+
+    suffix = ("Complete [Turns: %6.1f Layer: %d Speed: %1.1f TPS Elapsed time: %d secs]" % (job.current_turns, job.current_layer_mum, job.current_speed, now))
 
     print ("")
 
     printProgressBar(job.turns_progress, prefix='Progress:', suffix=suffix, bar_length=50)
-    time.sleep(1)
+    sleep(1)
 
     while(True):
         interface.get_status(job)
 #       sys.stdout.write("\rTurns: %6.1f Layer: %d Speed: %1.1f TPS Progress: %3.1f%%" % (job.current_turns, job.current_layer_mum, job.current_speed, job.turns_progress))
-        suffix = ("Complete [Turns: %6.1f Layer: %d Speed: %1.1f TPS]" % (job.current_turns, job.current_layer_mum, job.current_speed))
+        now = time() - start
+        suffix = ("Complete [Turns: %6.1f Layer: %d Speed: %1.1f TPS Elapsed time: %d secs]" % (job.current_turns, job.current_layer_mum, job.current_speed, now))
         printProgressBar(job.turns_progress, prefix='Progress:', suffix=suffix, bar_length=50)
 
         if not job.current_running:
             print("")
             break
-        time.sleep(1)
+        sleep(1)
     return
 
 def enter_size(descripion):
@@ -160,7 +166,7 @@ def enter_size(descripion):
                 parsed_size = float(size_selection)
             except ValueError:
                 print("Size should be a float\n")
-                time.sleep(3)
+                sleep(3)
                 continue
             return parsed_size
 
@@ -196,7 +202,7 @@ def motor_control(interface):
             continue
         else:
             print("Unkown option")
-            time.sleep(3)
+            sleep(3)
             continue
 
 # From Gist https://gist.github.com/aubricus/f91fb55dc6ba5557fbab06119420dd6a
