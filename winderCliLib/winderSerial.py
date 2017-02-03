@@ -238,6 +238,9 @@ class Ifc(object):
     def get_motor_status(self):
         return (self.motors['spool'], self.motors['shuttle'])
 
+    def pause(self):
+        self.send_heading("PS")
+
     def start(self):
         self.send_heading("GO")
 

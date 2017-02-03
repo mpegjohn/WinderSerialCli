@@ -6,6 +6,7 @@ from time import time
 from winderCliLib.winderSerial import Ifc
 from winderCliLib.winderJob import Job
 import sys
+import select
 
 def main():
     print("Welcome to the winder interface")
@@ -148,6 +149,28 @@ def execute_job(job, interface):
         suffix = ("Complete [Turns: %6.1f Layer: %d Speed: %1.1f TPS Elapsed time: %d secs]" % (job.current_turns, job.current_layer_mum, job.current_speed, now))
         printProgressBar(job.turns_progress, prefix='Progress:', suffix=suffix, bar_length=50)
 
+        if heardEnter(1.5):
+            interface.pause()
+            while(True):
+                print("\n-------------------------------------")
+                print("Winder is PAUSED")
+                print("-------------------------------------")
+                print("c : Continue job")
+                print("q : Quit job")
+
+                input = raw_input("Make a selection: ")
+
+                if input.lower() == 'q':
+                    return
+                elif input.lower() == 'c':
+                    interface.start()
+                    sleep(0.2)
+                    break
+                else:
+                    print("Unkown option")
+                    sleep(3)
+                    continue
+
         if not job.current_running:
             print("")
             break
@@ -224,6 +247,14 @@ def printProgressBar(progress, prefix='', suffix='', decimals=1, bar_length=100)
     sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percents, '%', suffix)),
 
     sys.stdout.flush()
+
+def heardEnter(timeout):
+    i,o,e = select.select([sys.stdin],[],[],timeout)
+    for s in i:
+        if s == sys.stdin:
+            sys.stdin.readline()
+            return True
+    return False
 
 if __name__ == '__main__':
     main()
