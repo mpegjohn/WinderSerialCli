@@ -7,6 +7,7 @@ class Job(object):
         self.wire_size = wire_size
         self.turns = turns
         self.spool_length = spool_length
+        self.taps = []
 
     def calculate_stackup(self):
         """Calculates the stackup for this job
@@ -24,7 +25,7 @@ class Job(object):
         self.turns_last_layer = fractional_part * float(self.turns_per_layer)
         self.turns_last_layer = round(self.turns_last_layer)
 
-    def update_status(self, layer_num, turns, layer_turns, speed, direction, running):
+    def update_status(self, layer_num, turns, layer_turns, speed, direction, running, at_tap):
         """Updates the status of the winding
         Calculates the percent complete.
         """
@@ -42,7 +43,31 @@ class Job(object):
         if running:
             self.current_running = True
 
+        self.at_tap = False
+        if at_tap:
+            self.at_tap = True
+
         self.turns_progress = (self.current_turns / self.turns) * 100
+
+    def add_tap(self, turn):
+
+        if(turn > self.turns):
+            return False
+
+        if(turn < 0.5):
+            return False
+
+        for tap in self.taps:
+            if turn < tap + 0.4 and turn > tap - 0.4:
+                return False
+        self.taps.append(turn)
+        self.taps.sort()
+        return True
+
+    def delete_tap(self, index):
+        del self.taps[index]
+        self.taps.sort()
+
 
     def __str__(self):
         turns_repr =  "Number of Turns: %8.1f\n" % self.turns

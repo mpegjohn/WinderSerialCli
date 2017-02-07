@@ -36,5 +36,25 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(my_job.turns_last_layer, 18, "Incorrect turns last layer")
 
 
+    def test_add_tap(self):
+        my_job = Job(0.5, 1250, 18.0)
+        self.assertTrue(my_job.add_tap(123.0), "Failed to add Tap")
+
+    def test_add_tap_past_turns(self):
+        my_job = Job(0.5, 1250, 18.0)
+        self.assertFalse(my_job.add_tap(1260), "Managed to add tap past the end of the turns")
+
+    def test_add_tap_twice(self):
+        my_job = Job(0.5, 1250, 18.0)
+        my_job.add_tap(123.0)
+        self.assertFalse(my_job.add_tap(123.0), "Managed to add tap twice")
+        self.assertFalse(my_job.add_tap(123.3), "Managed to add tap twice on upper limit")
+        self.assertFalse(my_job.add_tap(122.7), "Managed to add tap twice on lower limit")
+
+    def test_add_tap_at_zero(self):
+        my_job = Job(0.5, 1250, 18.0)
+        self.assertFalse(my_job.add_tap(0), "Managed to add tap at zero")
+
+
 if __name__ == '__main__':
     unittest.main()

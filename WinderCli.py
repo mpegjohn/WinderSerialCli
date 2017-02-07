@@ -66,63 +66,143 @@ def print_menu(interface):
         print("w : Set wire size %2.3f" % (job.wire_size))
         print("l : Set wire spool length %3.2f" % (job.spool_length))
         print("n : Set number of turns %8.1f" % (job.turns))
+        print("t : Taps")
         print("r : Run")
         print("m : Manual Motor control")
         print("j : Review job")
         print("q : Quit program")
         print("-------------------------------------")
 
-        selection = raw_input("Choose option: ")
+        selection = raw_input("Choose option: ").lower()
 
-        if (selection.lower() == 'w'):
+        if (selection == 'w'):
             got_size = enter_size("Enter wire size")
 
             if (got_size != 'q'):
                 job.wire_size = got_size
             else:
                 continue
-        elif (selection.lower() == 'l'):
+        elif selection == 'l':
             got_size = enter_size("Enter spool length")
 
             if (got_size != 'q'):
                 job.spool_length = got_size
             else:
                 continue
-        elif (selection.lower() == 'n'):
+        elif (selection == 'n'):
             got_size = enter_size("Enter number of turns")
 
             if (got_size != 'q'):
                 job.turns = got_size
             else:
                 continue
-        elif (selection.lower() == 'j'):
+        elif (selection == 'j'):
             job.calculate_stackup()
             print("\n-------------------------------------")
             print("Calculated stackup")
             print("-------------------------------------")
             print (job.__str__())
-            print("-------------------------------------\n")
+            print("-------------------------------------")
+            raw_input("Hit enter to continue")
             continue
-        elif (selection.lower() == 'm'):
+        elif (selection == 't'):
+            taps(job)
+            continue
+        elif (selection == 'm'):
             motor_control(interface)
             continue
-        elif (selection.lower() == 'r'):
+        elif (selection == 'r'):
             job.calculate_stackup()
             print("\n-------------------------------------")
             print("Run a job with this stackup?")
             print("-------------------------------------")
             print (job.__str__())
-            print("-------------------------------------\n")
-            selection = raw_input("y/n: ")
-            if selection.lower() == 'y':
+            print("-------------------------------------")
+            selection = raw_input("y/n: ").lower()
+            if selection == 'y':
                 execute_job(job, interface)
             continue
-        elif (selection.lower() == 'q'):
+        elif selection == 'q':
             exit(0)
         else:
             print("Unkown option")
             sleep(3)
             continue
+
+
+def taps(job):
+
+    while(True):
+        print("-------------------------------------")
+        print("a: Add a tap")
+        print("d: delete a tap")
+        print("s: Show all taps")
+        print("q: Quit manu")
+
+        selection = raw_input("Enter selection: ").lower()
+
+        if selection == 'q':
+            return
+        elif selection == 'a':
+            tap_turns = enter_size("Enter turns for tap: ")
+
+            if not job.add_tap(tap_turns):
+                print("Unable to add this tap\n")
+            else:
+                print("Added Tap at %8.1f" % tap_turns)
+            sleep(3)
+            continue
+        elif selection == 's':
+
+            if not print_taps(job):
+                continue
+
+            raw_input("Hit enter to continue")
+            continue
+        elif selection == 'd':
+
+            if not print_taps(job):
+                continue
+            index = 0
+            while(True):
+                index = raw_input("Enter index of tap to delete (q quit manu): ")
+
+                tap_range = range(len(job.taps))
+
+                if index.lower() == 'q':
+                    break
+
+                index = int(index)
+
+                if index not in tap_range:
+                    print("Index not in range")
+                    sleep(3)
+                    continue
+                else:
+                    job.delete_tap(index)
+                    break
+        else:
+            print("Unknown selection")
+            sleep(3)
+            continue
+
+
+
+
+def print_taps(job):
+    if len(job.taps) == 0:
+        print("No Taps are set")
+        sleep(3)
+        return False
+    print("-------------------------------------")
+    print("Taps")
+    print("-------------------------------------")
+    i = 0
+    for tap in job.taps:
+        print("(%d) at %8.1f" % (i, tap))
+        i += 1
+    return True
+
 
 def execute_job(job, interface):
     """Runs this job.against this interface"""
@@ -158,11 +238,11 @@ def execute_job(job, interface):
                 print("c : Continue job")
                 print("q : Quit job")
 
-                input = raw_input("Make a selection: ")
+                input = raw_input("Make a selection: ").lower()
 
-                if input.lower() == 'q':
+                if input == 'q':
                     return
-                elif input.lower() == 'c':
+                elif input == 'c':
                     interface.start()
                     sleep(0.2)
                     break
@@ -179,9 +259,9 @@ def execute_job(job, interface):
 
 def enter_size(descripion):
     while (True):
-        size_selection = raw_input(descripion + " (q quit): ")
+        size_selection = raw_input(descripion + " (q quit): ").lower()
 
-        if (size_selection.lower() == 'q'):
+        if (size_selection == 'q'):
             return 'q'
         else:
             parsed_size = 0.0
@@ -211,16 +291,16 @@ def motor_control(interface):
         print("s : Toggle spool (%s)" % spool_state)
         print("h : Toggle shuttle (%s)" % shuttle_state)
         print("q : quit")
-        selection = raw_input("Choose option: ")
+        selection = raw_input("Choose option: ").lower()
 
-        if selection.lower() == 'q':
+        if selection == 'q':
             return
 
-        if selection.lower() == 's':
+        if selection == 's':
             interface.toggle_motor_state('spool')
             continue
 
-        elif selection.lower() == 'h':
+        elif selection == 'h':
             interface.toggle_motor_state('shuttle')
             continue
         else:

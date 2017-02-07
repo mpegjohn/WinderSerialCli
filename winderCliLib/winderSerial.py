@@ -203,6 +203,7 @@ class Ifc(object):
         speed_bytes = self.ser.read(4)
         direction_byte = self.ser.read(1)
         running_byte = self.ser.read(1)
+        at_tap_byte = self.ser.read(1)
 
         layer_number = struct.unpack('B', layer_number_byte)[0]
         turns = struct.unpack('f', turns_bytes)[0]
@@ -210,8 +211,13 @@ class Ifc(object):
         speed = struct.unpack('f', speed_bytes)[0]
         direction = struct.unpack('B', direction_byte)[0]
         running = struct.unpack('B', running_byte)[0]
+        at_tap = struct.unpack('B', at_tap_byte)[0]
 
         job.update_status(layer_num=layer_number, turns=turns, layer_turns=layer_turns, speed=speed, direction=direction, running=running)
+
+    def add_tap(self, turn):
+        self.send_heading('AT')
+        self.send_float(turn)
 
     def toggle_motor_state(self, motor):
 
