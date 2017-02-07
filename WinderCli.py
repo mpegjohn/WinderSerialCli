@@ -215,19 +215,22 @@ def execute_job(job, interface):
     start = time()
     now = time() - start
 
-    suffix = ("Complete [Turns: %6.1f Layer: %d Speed: %1.1f TPS Elapsed time: %d secs]" % (job.current_turns, job.current_layer_mum, job.current_speed, now))
+    suffix = ("[Turns: %6.1f Layer: %d Speed: %1.1f TPS Elapsed time: %d secs]" % (job.current_turns, job.current_layer_mum, job.current_speed, now))
 
     print ("")
-
-    printProgressBar(job.turns_progress, prefix='Progress:', suffix=suffix, bar_length=50)
+    sys.stdout.write("\r" + suffix)
+    sys.stdout.flush()
+#    printProgressBar(job.turns_progress, prefix='Progress:', suffix=suffix, bar_length=50)
     sleep(1)
 
     while(True):
         interface.get_status(job)
 #       sys.stdout.write("\rTurns: %6.1f Layer: %d Speed: %1.1f TPS Progress: %3.1f%%" % (job.current_turns, job.current_layer_mum, job.current_speed, job.turns_progress))
         now = time() - start
-        suffix = ("Complete [Turns: %6.1f Layer: %d Speed: %1.1f TPS Elapsed time: %d secs]" % (job.current_turns, job.current_layer_mum, job.current_speed, now))
-        printProgressBar(job.turns_progress, prefix='Progress:', suffix=suffix, bar_length=50)
+        suffix = ("[Turns: %6.1f Layer: %d Speed: %1.1f TPS Elapsed time: %d secs]" % (job.current_turns, job.current_layer_mum, job.current_speed, now))
+        sys.stdout.write("\r" + suffix)
+        sys.stdout.flush()
+#       printProgressBar(job.turns_progress, prefix='Progress:', suffix=suffix, bar_length=50)
 
         if heardEnter(1.5):
             interface.pause()
