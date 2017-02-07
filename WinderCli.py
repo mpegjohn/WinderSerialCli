@@ -215,7 +215,7 @@ def execute_job(job, interface):
     start = time()
     now = time() - start
 
-    suffix = ("[Turns: %6.1f Layer: %d Speed: %1.1f T/S El time: %d secs]" % (job.current_turns, job.current_layer_mum, job.current_speed, now))
+    suffix = ("[Turns: %6.1f Layer: %d Speed: %1.1f T/S El time: %d s]" % (job.current_turns, job.current_layer_mum, job.current_speed, now))
 
     print ("")
     sys.stdout.write("\r" + suffix)
@@ -227,7 +227,7 @@ def execute_job(job, interface):
         interface.get_status(job)
 #       sys.stdout.write("\rTurns: %6.1f Layer: %d Speed: %1.1f TPS Progress: %3.1f%%" % (job.current_turns, job.current_layer_mum, job.current_speed, job.turns_progress))
         now = time() - start
-        suffix = ("[Turns: %6.1f Layer: %d Speed: %1.1f T/S El time: %d secs]" % (job.current_turns, job.current_layer_mum, job.current_speed, now))
+        suffix = ("[Turns: %6.1f Layer: %d Speed: %1.1f T/S El time: %d s]" % (job.current_turns, job.current_layer_mum, job.current_speed, now))
         sys.stdout.write("\r" + suffix)
         sys.stdout.flush()
 #       printProgressBar(job.turns_progress, prefix='Progress:', suffix=suffix, bar_length=50)
