@@ -37,8 +37,7 @@ def get_port_selection(interface):
 
         all_ports = interface.get_all_ports()
 
-        selection = 0
-        for port in all_ports:
+        for selection, port in enumerate(all_ports):
             print ("(%d) %s" % (selection, port))
             selection +=1
         print("(%d) quit" % selection)
@@ -46,7 +45,7 @@ def get_port_selection(interface):
 
         choice = int(raw_input("Choice: "))
 
-        if choice not in range(0,selection+1,1):
+        if choice not in range(selection):
             print("Invalid choice")
             sleep(3)
             continue
@@ -136,7 +135,7 @@ def taps(job):
         print("-------------------------------------")
         print("a: Add a tap")
         print("d: delete a tap")
-        print("s: Show all taps")
+        print("l: List all taps")
         print("q: Quit manu")
 
         selection = raw_input("Enter selection: ").lower()
@@ -152,7 +151,7 @@ def taps(job):
                 print("Added Tap at %8.1f" % tap_turns)
             sleep(3)
             continue
-        elif selection == 's':
+        elif selection == 'l':
 
             if not print_taps(job):
                 continue
@@ -161,13 +160,14 @@ def taps(job):
             continue
         elif selection == 'd':
 
-            if not print_taps(job):
+            num_taps = print_taps(job)
+            if num_taps == 0:
                 continue
-            index = 0
+
             while(True):
                 index = raw_input("Enter index of tap to delete (q quit manu): ")
 
-                tap_range = range(len(job.taps))
+                tap_range = range(num_taps)
 
                 if index.lower() == 'q':
                     break
@@ -193,15 +193,15 @@ def print_taps(job):
     if len(job.taps) == 0:
         print("No Taps are set")
         sleep(3)
-        return False
+        return 0
     print("-------------------------------------")
     print("Taps")
     print("-------------------------------------")
-    i = 0
-    for tap in job.taps:
+
+    for i, tap in enumerate(job.taps):
         print("(%d) at %8.1f" % (i, tap))
         i += 1
-    return True
+    return i
 
 
 def execute_job(job, interface):
@@ -253,6 +253,11 @@ def execute_job(job, interface):
                     print("Unkown option")
                     sleep(3)
                     continue
+
+        if job.at_tap:
+            interface.get_status(job)
+            raw_input("\nAt tap %3.1f, press any key" % job.current_turns)
+            interface.start()
 
         if not job.current_running:
             print("")

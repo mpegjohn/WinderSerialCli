@@ -73,6 +73,7 @@ class Ifc(object):
         self.ser.reset_output_buffer()
 
         self.send_heading('SJ')
+        self.send_heading('RS') # Reset all counters
         self.send_heading('WS')
         self.send_float(job.wire_size)
         self.send_heading('TT')
@@ -85,6 +86,11 @@ class Ifc(object):
         self.send_byte(job.whole_layers)
         self.send_heading('LL')
         self.send_float(job.turns_last_layer)
+
+        for tap in job.taps:
+            self.send_heading('AT')
+            self.send_float(tap)
+
         self.send_heading('DN')
 
     def send_heading(self, heading):
