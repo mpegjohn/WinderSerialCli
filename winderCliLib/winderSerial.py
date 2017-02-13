@@ -256,6 +256,18 @@ class Ifc(object):
     def start(self):
         self.send_heading("GO")
 
+    def spool_motor(self, direction, stop = False):
+
+        if stop:
+            self.send_heading("ST")
+            return
+
+        if direction == "CW":
+            self.send_heading("SC")
+        else:
+            self.send_heading("SA")
+
+
 
 
 

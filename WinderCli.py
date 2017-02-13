@@ -43,7 +43,11 @@ def get_port_selection(interface):
         print("(%d) quit" % selection)
         print("-------------------------------------")
 
-        choice = int(raw_input("Choice: "))
+        try:
+            choice = int(raw_input("Choice: "))
+        except ValueError:
+            print("Must be an integer")
+            continue
 
         if choice not in range(selection):
             print("Invalid choice")
@@ -172,7 +176,12 @@ def taps(job):
                 if index.lower() == 'q':
                     break
 
-                index = int(index)
+                try:
+                    index = int(index)
+                except ValueError:
+                    print("Enter an integer value")
+                    sleep(3)
+                    continue
 
                 if index not in tap_range:
                     print("Index not in range")
@@ -185,9 +194,6 @@ def taps(job):
             print("Unknown selection")
             sleep(3)
             continue
-
-
-
 
 def print_taps(job):
     if len(job.taps) == 0:
@@ -272,7 +278,6 @@ def enter_size(descripion):
         if (size_selection == 'q'):
             return 'q'
         else:
-            parsed_size = 0.0
             try:
                 parsed_size = float(size_selection)
             except ValueError:
@@ -298,6 +303,8 @@ def motor_control(interface):
 
         print("s : Toggle spool (%s)" % spool_state)
         print("h : Toggle shuttle (%s)" % shuttle_state)
+        print("c : Turn spool clockwise")
+        print("a : Turn spool anti- clockwise")
         print("q : quit")
         selection = raw_input("Choose option: ").lower()
 
@@ -307,9 +314,17 @@ def motor_control(interface):
         if selection == 's':
             interface.toggle_motor_state('spool')
             continue
-
         elif selection == 'h':
             interface.toggle_motor_state('shuttle')
+            continue
+        elif selection == "c" or selection == "a":
+            if selection == "c":
+                interface.spool_motor("CW")
+            else:
+                interface.spool_motor("CC")
+
+            raw_input("Hit enter to stop")
+            interface.spool_motor(" ", stop= True)
             continue
         else:
             print("Unkown option")
