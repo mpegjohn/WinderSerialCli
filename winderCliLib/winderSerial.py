@@ -218,8 +218,9 @@ class Ifc(object):
         direction = struct.unpack('B', direction_byte)[0]
         running = struct.unpack('B', running_byte)[0]
         at_tap = struct.unpack('B', at_tap_byte)[0]
+        done_layer = struct.unpack('B', at_tap_byte)[0]
 
-        job.update_status(layer_num=layer_number, turns=turns, layer_turns=layer_turns, speed=speed, direction=direction, running=running, at_tap=at_tap)
+        job.update_status(layer_num=layer_number, turns=turns, layer_turns=layer_turns, speed=speed, direction=direction, running=running, at_tap=at_tap, done_layer=done_layer )
 
     def add_tap(self, turn):
         self.send_heading('AT')
