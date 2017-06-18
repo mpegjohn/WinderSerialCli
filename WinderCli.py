@@ -74,6 +74,7 @@ def print_menu(interface):
         print("r : Run")
         print("m : Manual Motor control")
         print("j : Review job")
+        print("h : Shuttle go home")
         print("q : Quit program")
         print("-------------------------------------")
 
@@ -102,6 +103,8 @@ def print_menu(interface):
                 job.turns = got_size
             else:
                 continue
+        elif (selection == 'h'):
+            interface.go_home()
         elif (selection == 'j'):
             job.calculate_stackup()
             print("\n-------------------------------------")

@@ -248,6 +248,9 @@ class Ifc(object):
 
         return True
 
+    def go_home(self):
+        self.send_heading("GH")
+
     def get_motor_status(self):
         return (self.motors['spool'], self.motors['shuttle'])
 
