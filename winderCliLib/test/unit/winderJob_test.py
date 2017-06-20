@@ -3,7 +3,9 @@ import unittest
 from winderCliLib.winderJob import Job
 
 
+
 class MyTestCase(unittest.TestCase):
+
     def test_job_instance(self):
         my_job = Job(0.5, 1250, 18.0)
         self.assertIsInstance(my_job, Job, "Incorrect object type")

@@ -5,6 +5,7 @@ from time import sleep
 from time import time
 from winderCliLib.winderSerial import Ifc
 from winderCliLib.winderJob import Job
+from winderCliLib.configLoader import ConfigLoader
 import sys
 import select
 
@@ -75,6 +76,7 @@ def print_menu(interface):
         print("m : Manual Motor control")
         print("j : Review job")
         print("h : Shuttle go home")
+        print("f : Load setup from file..")
         print("q : Quit program")
         print("-------------------------------------")
 
@@ -105,6 +107,13 @@ def print_menu(interface):
                 continue
         elif (selection == 'h'):
             interface.go_home()
+        elif (selection == 'f'):
+            my_config = ConfigLoader()
+            my_config.set_yaml_config()
+            my_config.parse_config()
+            my_config.list_windings()
+            my_config.get_winding_selection()
+
         elif (selection == 'j'):
             job.calculate_stackup()
             print("\n-------------------------------------")
@@ -146,7 +155,7 @@ def taps(job):
         print("a: Add a tap")
         print("d: delete a tap")
         print("l: List all taps")
-        print("q: Quit manu")
+        print("q: Quit menu")
 
         selection = raw_input("Enter selection: ").lower()
 
@@ -271,10 +280,10 @@ def execute_job(job, interface):
             raw_input("\nAt tap %3.1f, press any key" % job.current_turns)
             interface.start()
 
-        if job.done_layer:
-            interface.get_status(job)
-            raw_input("\nDone layer %3.1f, press any key" % job.current_turns)
-            interface.start()
+        #if job.done_layer:
+        #    interface.get_status(job)
+        #    raw_input("\nDone layer %3.1f, press any key" % job.current_turns)
+        #    interface.start()
 
         if not job.current_running:
             print("")
