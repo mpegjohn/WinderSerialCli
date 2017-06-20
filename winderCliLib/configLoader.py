@@ -62,7 +62,7 @@ class ConfigLoader(object):
                             continue
                         else:
                             self.config_file = files[index]
-                            return
+                            return true
 
     def parse_config(self):
         with open(self.config_file, 'r') as stream:
@@ -102,7 +102,7 @@ class ConfigLoader(object):
             sel_range = range(self.winding_range)
 
             if index.lower() == 'q':
-                break
+                return False
 
             try:
                 index = int(index)
@@ -117,7 +117,7 @@ class ConfigLoader(object):
                 continue
             else:
                 self.selected_winding = self.yaml_object['windings'][index]
-                return
+                return True
 
     def get_config_files(self):
         files = glob.glob(join(self.config_dir, "*.yaml"))

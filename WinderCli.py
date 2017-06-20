@@ -109,10 +109,21 @@ def print_menu(interface):
             interface.go_home()
         elif (selection == 'f'):
             my_config = ConfigLoader()
-            my_config.set_yaml_config()
+            if not my_config.set_yaml_config():
+                continue
             my_config.parse_config()
             my_config.list_windings()
-            my_config.get_winding_selection()
+            if not my_config.get_winding_selection():
+                continue
+
+            job.wire_size = float(my_config.selected_winding['wire size'])
+            job.spool_length = float(my_config.selected_winding['length'])
+            job.turns = float(my_config.selected_winding['turns'])
+
+            if taps in my_config.selected_winding:
+                for tap in my_config.selected_winding['taps']:
+                    job.add_tap(float(tap['turns']))
+            continue
 
         elif (selection == 'j'):
             job.calculate_stackup()
