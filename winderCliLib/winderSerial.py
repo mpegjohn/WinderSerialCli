@@ -63,6 +63,7 @@ class Ifc(object):
          TT[4 bytes] - number of turns
          NL[1 byte ] -- Number of whole layers
          LL[4 bytes ] -- Turns last layer
+         PL(if pause after layer ==True)
          DN - Done
 
          Args:
@@ -86,6 +87,8 @@ class Ifc(object):
         self.send_byte(job.whole_layers)
         self.send_heading('LL')
         self.send_float(job.turns_last_layer)
+        if(job.pause_after_layer):
+            self.send_heading('PL')
 
         for tap in job.taps:
             self.send_heading('AT')
