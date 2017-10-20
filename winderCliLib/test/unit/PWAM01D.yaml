@@ -1,0 +1,23 @@
+# PWAM01D winding file
+
+windings:
+   -  name: P1
+      voltage: 120
+      wire size : 0.25
+      length : 15
+      turns : 415
+   -  name : P2
+      voltage: 120
+      wire size : 0.25
+      length : 15
+      turns : 415
+   -  name : S1
+      voltage: 275
+      wire size : 0.25
+      length : 15
+      turns : 1125
+      taps:
+        - voltage: 190
+          turns: 777
+        - voltage: 220
+          turns: 809
