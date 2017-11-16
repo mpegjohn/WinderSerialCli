@@ -72,7 +72,7 @@ def print_menu(interface):
         print("n : Set number of turns %8.1f" % job.turns)
         print("t : Taps %s" % job.taps_as_list())
         print("p : Pause after every layer %s" % job.pause_after_layer)
-        print("d : Start direction %s" % job.start_direction)
+        print("d : Directions Spool: %s, Shuttle: %s" % (job.spool_direction, job.shuttle_direction))
         print("r : Run")
         print("m : Manual Motor control")
         print("j : Review job")
@@ -100,10 +100,8 @@ def print_menu(interface):
         elif (selection == 'p'):
             job.pause_after_layer = not job.pause_after_layer
         elif (selection == 'd'):
-           if(job.start_direction == "L2R"):
-              job.start_direction = "R2L"
-           else:
-              job.start_direction = "L2R"
+            setDirections(job)
+            continue
         elif (selection == 'n'):
             got_size = enter_size("Enter number of turns")
 
@@ -164,6 +162,34 @@ def print_menu(interface):
             sleep(3)
             continue
 
+def setDirections(job):
+
+    while True :
+        print("-------------------------------------")
+        print("s: Spool direction %s" % job.spool_direction)
+        print("h: shuttle direction %s" % job.shuttle_direction)
+        print("q: Quit menu")
+
+        selection = raw_input("Enter selection: ").lower()
+
+        if selection == 'q':
+            return
+        elif selection == 's':
+            if job.spool_direction == "ACW":
+                job.spool_direction = "CW"
+            else:
+                job.spool_direction = "ACW"
+            continue
+        elif selection == 'h':
+            if job.shuttle_direction == "L2R":
+                job.shuttle_direction = "R2L"
+            else:
+                job.shuttle_direction = "L2R"
+            continue
+        else:
+            print("Unknown selection")
+            sleep(3)
+            continue
 
 def taps(job):
 

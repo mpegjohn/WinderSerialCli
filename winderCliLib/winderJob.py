@@ -9,7 +9,8 @@ class Job(object):
         self.spool_length = spool_length
         self.pause_after_layer = False
         self.taps = []
-        self.start_direction = "L2R"
+        self.shuttle_direction = "L2R"
+        self.spool_direction = "ACW"
 
     def calculate_stackup(self):
         """Calculates the stackup for this job

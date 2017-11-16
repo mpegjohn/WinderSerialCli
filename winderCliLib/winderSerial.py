@@ -88,8 +88,11 @@ class Ifc(object):
         self.send_heading('LL')
         self.send_float(job.turns_last_layer)
 
-	if(job.start_direction == "R2L"):
-	   self.send_heading('SR') # Shuttle reverse
+        if job.shuttle_direction == "R2L":
+            self.send_heading('SR') # Shuttle reverse
+
+        if job.spool_direction == "CW":
+            self.send_heading('PR')  # Spool reverse
 
         if(job.pause_after_layer):
             self.send_heading('PL')
