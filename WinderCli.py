@@ -70,8 +70,9 @@ def print_menu(interface):
         print("w : Set wire size %2.3f" % (job.wire_size))
         print("l : Set wire spool length %3.2f" % (job.spool_length))
         print("n : Set number of turns %8.1f" % (job.turns))
-        print("t : Taps")
+        print("t : Taps %s" % (job.taps_as_list()))
         print("p : Pause after every layer %s" % (job.pause_after_layer))
+	print("d : Start direction %s" % (job.start_direction))
         print("r : Run")
         print("m : Manual Motor control")
         print("j : Review job")
@@ -98,6 +99,11 @@ def print_menu(interface):
                 continue
         elif (selection == 'p'):
             job.pause_after_layer = not job.pause_after_layer
+	elif ((selection == 'd'):
+	    if(job.start_direction == "L2R"):
+		job.start_direction == "R2L"
+	    else:
+		job.start_direction == "L2R"	
         elif (selection == 'n'):
             got_size = enter_size("Enter number of turns")
 
