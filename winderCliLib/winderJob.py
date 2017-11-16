@@ -9,7 +9,7 @@ class Job(object):
         self.spool_length = spool_length
         self.pause_after_layer = False
         self.taps = []
-	self.start_direction = "L2R"
+        self.start_direction = "L2R"
 
     def calculate_stackup(self):
         """Calculates the stackup for this job
@@ -75,11 +75,11 @@ class Job(object):
         self.taps.sort()
 
     def taps_as_list()
-	strtaps = [str(t) for t in iself.taps]
-	the_list = ",".join(strtaps)
+        strtaps = [str(t) for t in iself.taps]
+        the_list = ",".join(strtaps)
 
-	tap_list = "[" + the_list + "]"
-	return tap_list
+        tap_list = "[" + the_list + "]"
+        return tap_list
 
 
 
