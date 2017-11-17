@@ -75,8 +75,8 @@ class Job(object):
         del self.taps[index]
         self.taps.sort()
 
-    def taps_as_list()
-        strtaps = [str(t) for t in iself.taps]
+    def taps_as_list(self):
+        strtaps = [str(t) for t in self.taps]
         the_list = ",".join(strtaps)
 
         tap_list = "[" + the_list + "]"

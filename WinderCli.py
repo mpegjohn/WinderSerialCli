@@ -8,18 +8,27 @@ from winderCliLib.winderJob import Job
 from winderCliLib.configLoader import ConfigLoader
 import sys
 import select
+import argparse
 
 def main():
     print("Welcome to the winder interface")
 
-    interface = Ifc()
+    parser = argparse.ArgumentParser(description='The Winder interface')
+    parser.add_argument('--noifc', help='enable this if you just want  the front end', action='store_true', default=False)
+    args = parser.parse_args()
 
-    port = get_port_selection(interface)
-    print("Port selected: " + port)
-    interface.selected_port = port
+    if not args.noifc:
 
-    interface.setup_serial()
-    print_menu(interface)
+        interface = Ifc()
+
+        port = get_port_selection(interface)
+        print("Port selected: " + port)
+        interface.selected_port = port
+
+        interface.setup_serial()
+        print_menu(interface)
+    else:
+        print_menu(None)
 
 
 def get_port_selection(interface):
@@ -150,6 +159,7 @@ def print_menu(interface):
             print("Run a job with this stackup?")
             print("-------------------------------------")
             print (job.__str__())
+            print ("Taps %s" % job.taps_as_list())
             print("-------------------------------------")
             selection = raw_input("y/n: ").lower()
             if selection == 'y':
@@ -211,7 +221,7 @@ def taps(job):
                 print("Unable to add this tap\n")
             else:
                 print("Added Tap at %8.1f" % tap_turns)
-            sleep(3)
+            sleep(2)
             continue
         elif selection == 'l':
 
