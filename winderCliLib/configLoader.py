@@ -62,7 +62,7 @@ class ConfigLoader(object):
                             continue
                         else:
                             self.config_file = files[index]
-                            return true
+                            return True
 
     def parse_config(self):
         with open(self.config_file, 'r') as stream:

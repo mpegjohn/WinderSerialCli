@@ -133,7 +133,7 @@ def print_menu(interface):
             job.spool_length = float(my_config.selected_winding['length'])
             job.turns = float(my_config.selected_winding['turns'])
 
-            if taps in my_config.selected_winding:
+            if 'taps' in my_config.selected_winding:
                 for tap in my_config.selected_winding['taps']:
                     job.add_tap(float(tap['turns']))
             continue
