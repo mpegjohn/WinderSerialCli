@@ -14,7 +14,7 @@ def main():
     print("Welcome to the winder interface")
 
     parser = argparse.ArgumentParser(description='The Winder interface')
-    parser.add_argument('--noifc', help='enable this if you just want  the front end', action='store_true', default=False)
+    parser.add_argument('--noifc', help='enable this if you just want the front end', action='store_true', default=False)
     args = parser.parse_args()
 
     if not args.noifc:
