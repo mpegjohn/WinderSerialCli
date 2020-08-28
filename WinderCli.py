@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
 from time import sleep
 from time import time
 from winderCliLib.winderSerial import Ifc
@@ -9,6 +8,7 @@ from winderCliLib.configLoader import ConfigLoader
 import sys
 import select
 import argparse
+
 
 def main():
     print("Welcome to the winder interface")
@@ -41,7 +41,7 @@ def get_port_selection(interface):
     If q is selected program quits.
     """
 
-    while(True):
+    while True:
         print("-------------------------------------")
         print("Select the correct serial port from the list")
 
@@ -54,7 +54,7 @@ def get_port_selection(interface):
         print("-------------------------------------")
 
         try:
-            choice = int(raw_input("Choice: "))
+            choice = int(input("Choice: "))
         except ValueError:
             print("Must be an integer")
             continue
@@ -68,12 +68,13 @@ def get_port_selection(interface):
 
         return all_ports[choice]
 
+
 def print_menu(interface):
     """This is the main menu."""
 
     job = Job(0.5, 500, 18.0)
 
-    while (True):
+    while True:
 
         print("-------------------------------------")
         print("w : Set wire size %2.3f" % job.wire_size)
@@ -90,37 +91,37 @@ def print_menu(interface):
         print("q : Quit program")
         print("-------------------------------------")
 
-        selection = raw_input("Choose option: ").lower()
+        selection = input("Choose option: ").lower()
 
-        if (selection == 'w'):
+        if selection == 'w':
             got_size = enter_size("Enter wire size")
 
-            if (got_size != 'q'):
+            if got_size != 'q':
                 job.wire_size = got_size
             else:
                 continue
         elif selection == 'l':
             got_size = enter_size("Enter spool length")
 
-            if (got_size != 'q'):
+            if got_size != 'q':
                 job.spool_length = got_size
             else:
                 continue
-        elif (selection == 'p'):
+        elif selection == 'p':
             job.pause_after_layer = not job.pause_after_layer
-        elif (selection == 'd'):
-            setDirections(job)
+        elif selection == 'd':
+            set_directions(job)
             continue
-        elif (selection == 'n'):
+        elif selection == 'n':
             got_size = enter_size("Enter number of turns")
 
-            if (got_size != 'q'):
+            if got_size != 'q':
                 job.turns = got_size
             else:
                 continue
-        elif (selection == 'h'):
+        elif selection == 'h':
             interface.go_home()
-        elif (selection == 'f'):
+        elif selection == 'f':
             my_config = ConfigLoader()
             if not my_config.set_yaml_config():
                 continue
@@ -138,22 +139,22 @@ def print_menu(interface):
                     job.add_tap(float(tap['turns']))
             continue
 
-        elif (selection == 'j'):
+        elif selection == 'j':
             job.calculate_stackup()
             print("\n-------------------------------------")
             print("Calculated stackup")
             print("-------------------------------------")
             print (job.__str__())
             print("-------------------------------------")
-            raw_input("Hit enter to continue")
+            input("Hit enter to continue")
             continue
-        elif (selection == 't'):
+        elif selection == 't':
             taps(job)
             continue
-        elif (selection == 'm'):
+        elif selection == 'm':
             motor_control(interface)
             continue
-        elif (selection == 'r'):
+        elif selection == 'r':
             job.calculate_stackup()
             print("\n-------------------------------------")
             print("Run a job with this stackup?")
@@ -161,7 +162,7 @@ def print_menu(interface):
             print (job.__str__())
             print ("Taps %s" % job.taps_as_list())
             print("-------------------------------------")
-            selection = raw_input("y/n: ").lower()
+            selection = input("y/n: ").lower()
             if selection == 'y':
                 execute_job(job, interface)
             continue
@@ -172,7 +173,8 @@ def print_menu(interface):
             sleep(3)
             continue
 
-def setDirections(job):
+
+def set_directions(job):
 
     while True :
         print("-------------------------------------")
@@ -180,7 +182,7 @@ def setDirections(job):
         print("h: shuttle direction %s" % job.shuttle_direction)
         print("q: Quit menu")
 
-        selection = raw_input("Enter selection: ").lower()
+        selection = input("Enter selection: ").lower()
 
         if selection == 'q':
             return
@@ -201,16 +203,17 @@ def setDirections(job):
             sleep(3)
             continue
 
+
 def taps(job):
 
-    while(True):
+    while True:
         print("-------------------------------------")
         print("a: Add a tap")
         print("d: delete a tap")
         print("l: List all taps")
         print("q: Quit menu")
 
-        selection = raw_input("Enter selection: ").lower()
+        selection = input("Enter selection: ").lower()
 
         if selection == 'q':
             return
@@ -228,7 +231,7 @@ def taps(job):
             if not print_taps(job):
                 continue
 
-            raw_input("Hit enter to continue")
+            input("Hit enter to continue")
             continue
         elif selection == 'd':
 
@@ -236,8 +239,8 @@ def taps(job):
             if num_taps == 0:
                 continue
 
-            while(True):
-                index = raw_input("Enter index of tap to delete (q quit manu): ")
+            while True:
+                index = input("Enter index of tap to delete (q quit menu): ")
 
                 tap_range = range(num_taps)
 
@@ -262,6 +265,7 @@ def taps(job):
             print("Unknown selection")
             sleep(3)
             continue
+
 
 def print_taps(job):
     if len(job.taps) == 0:
@@ -297,7 +301,7 @@ def execute_job(job, interface):
 #    printProgressBar(job.turns_progress, prefix='Progress:', suffix=suffix, bar_length=50)
     sleep(1)
 
-    while(True):
+    while True:
         interface.get_status(job)
 #       sys.stdout.write("\rTurns: %6.1f Layer: %d Speed: %1.1f TPS Progress: %3.1f%%" % (job.current_turns, job.current_layer_mum, job.current_speed, job.turns_progress))
         now = time() - start
@@ -306,36 +310,36 @@ def execute_job(job, interface):
         sys.stdout.flush()
 #       printProgressBar(job.turns_progress, prefix='Progress:', suffix=suffix, bar_length=50)
 
-        if heardEnter(1.5):
+        if heard_enter(1.5):
             interface.pause()
-            while(True):
+            while True:
                 print("\n-------------------------------------")
                 print("Winder is PAUSED")
                 print("-------------------------------------")
                 print("c : Continue job")
                 print("q : Quit job")
 
-                input = raw_input("Make a selection: ").lower()
+                input_value = input("Make a selection: ").lower()
 
-                if input == 'q':
+                if input_value == 'q':
                     return
-                elif input == 'c':
+                elif input_value == 'c':
                     interface.start()
                     sleep(0.2)
                     break
                 else:
-                    print("Unkown option")
-                    sleep(3)
+                    print("Unknown option")
+                    sleep(1)
                     continue
 
         if job.at_tap:
             interface.get_status(job)
-            raw_input("\nAt tap %3.1f, press any key" % job.current_turns)
+            input("\nAt tap %3.1f, press any key" % job.current_turns)
             interface.start()
 
         #if job.done_layer:
         #    interface.get_status(job)
-        #    raw_input("\nDone layer %3.1f, press any key" % job.current_turns)
+        #    input("\nDone layer %3.1f, press any key" % job.current_turns)
         #    interface.start()
 
         if not job.current_running:
@@ -344,11 +348,12 @@ def execute_job(job, interface):
         sleep(1)
     return
 
-def enter_size(descripion):
-    while (True):
-        size_selection = raw_input(descripion + " (q quit): ").lower()
 
-        if (size_selection == 'q'):
+def enter_size(description):
+    while True:
+        size_selection = input(description + " (q quit): ").lower()
+
+        if size_selection == 'q':
             return 'q'
         else:
             try:
@@ -359,9 +364,10 @@ def enter_size(descripion):
                 continue
             return parsed_size
 
+
 def motor_control(interface):
-    """Manu motor control menu"""
-    while(True):
+    """Menu motor control menu"""
+    while True:
         (spool, shuttle) = interface.get_motor_status()
         print("\n-------------------------------------")
         print("Motor control")
@@ -379,7 +385,7 @@ def motor_control(interface):
         print("c : Turn spool clockwise")
         print("a : Turn spool anti- clockwise")
         print("q : quit")
-        selection = raw_input("Choose option: ").lower()
+        selection = input("Choose option: ").lower()
 
         if selection == 'q':
             return
@@ -396,7 +402,7 @@ def motor_control(interface):
             else:
                 interface.spool_motor("CC")
 
-            raw_input("Hit enter to stop")
+            input("Hit enter to stop")
             interface.spool_motor(" ", stop= True)
             continue
         else:
@@ -404,12 +410,13 @@ def motor_control(interface):
             sleep(3)
             continue
 
+
 # From Gist https://gist.github.com/aubricus/f91fb55dc6ba5557fbab06119420dd6a
-def printProgressBar(progress, prefix='', suffix='', decimals=1, bar_length=100):
+def print_progress_bar(progress, prefix='', suffix='', decimals=1, bar_length=100):
     """Print Progress in bar form
     Call in a loop to create terminal progress bar
     @params:
-        progreaa    - Required  : Progress to be represented in %
+        progress    - Required  : Progress to be represented in %
         prefix      - Optional  : prefix string (Str)
         suffix      - Optional  : suffix string (Str)
         decimals    - Optional  : positive number of decimals in percent complete (Int)
@@ -424,13 +431,15 @@ def printProgressBar(progress, prefix='', suffix='', decimals=1, bar_length=100)
 
     sys.stdout.flush()
 
-def heardEnter(timeout):
-    i,o,e = select.select([sys.stdin],[],[],timeout)
+
+def heard_enter(timeout):
+    i, o, e = select.select([sys.stdin],[],[],timeout)
     for s in i:
         if s == sys.stdin:
             sys.stdin.readline()
             return True
     return False
+
 
 if __name__ == '__main__':
     main()
